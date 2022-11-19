@@ -1,2 +1,4 @@
 Env = "local"
 BotToken="5426562025:AAEBBV7H4Yp6SFq73Rf10svWhKt_TAKUYjg"
+Dsn = "root:almat200202@tcp(localhost:3306)/project?charset=utf8mb4&parseTime=True&loc=Local"
+

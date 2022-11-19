@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"github.com/alma-amirseitov/TgBot/internal/models"
 	"log"
 	"time"
 
@@ -8,10 +9,12 @@ import (
 )
 
 type Bot struct {
-	Bot *telebot.Bot
+	Bot   *telebot.Bot
+	Users *models.UserModel
 }
 
 func InitBot(token string) *telebot.Bot {
+
 	pref := telebot.Settings{
 		Token:  token,
 		Poller: &telebot.LongPoller{Timeout: 10 * time.Second},

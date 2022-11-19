@@ -3,15 +3,18 @@ package main
 import (
 	"flag"
 	"github.com/alma-amirseitov/TgBot/cmd/bot"
+	"github.com/alma-amirseitov/TgBot/internal/models"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"log"
 
 	"github.com/BurntSushi/toml"
-	"gopkg.in/telebot.v3"
 )
 
 type Config struct {
 	Env      string
 	BotToken string
+	Dsn      string
 }
 
 func main() {
@@ -25,12 +28,20 @@ func main() {
 		log.Fatalf("Ошибка декодирования файла конфигов %v", err)
 	}
 
-	bot := bot.Bot{
-		Bot: bot.InitBot(cfg.BotToken),
+	db, err := gorm.Open(mysql.Open(cfg.Dsn), &gorm.Config{})
+
+	if err != nil {
+		log.Fatalf("Ошибка подключения к БД %v", err)
+	}
+	if !db.Migrator().HasTable(&models.User{}) {
+		db.Migrator().CreateTable(&models.User{})
 	}
 
-	bot.Bot.Handle("/start", func(ctx telebot.Context) error {
-		return ctx.Send("Привет, " + ctx.Sender().FirstName)
-	})
+	bot := bot.Bot{
+		Bot:   bot.InitBot(cfg.BotToken),
+		Users: &models.UserModel{Db: db},
+	}
+
+	bot.Bot.Handle("/start", bot.StartHandler)
 	bot.Bot.Start()
 }
