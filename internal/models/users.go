@@ -33,3 +33,15 @@ func (m *UserModel) FindOne(telegramId int64) (*User, error) {
 
 	return &existUser, nil
 }
+
+func (m *UserModel) FindAll() ([]User, error) {
+	existUser := []User{}
+
+	result := m.Db.Find(&existUser)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return existUser, nil
+}
