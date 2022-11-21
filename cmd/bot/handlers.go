@@ -51,10 +51,8 @@ func (bot *Bot) MessageHandler(ctx telebot.Context) error {
 		log.Printf("Ошибка получения пользователя %v", err)
 	}
 	for _, existUser := range existUsers {
-		if existUser.TelegramId == 335185393 {
-			log.Printf("пользователя %v", existUser.TelegramId)
-			return ctx.Send("sdfdf")
-		}
+		log.Printf("пользователя %v", existUser.TelegramId)
+		return ctx.Send("sdfdf")
 	}
 	return ctx.Send("Привет")
 }
