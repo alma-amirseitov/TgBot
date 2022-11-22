@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -41,18 +42,29 @@ func (bot *Bot) MessagePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	message := r.FormValue("message")
-	fmt.Printf("message = %s\n", message)
+	err := bot.MessageHandler(message)
+	if err != nil {
+		log.Printf("%v", err)
+	}
 }
 
-func (bot *Bot) MessageHandler(ctx telebot.Context) error {
-
-	existUsers, err := bot.Users.FindAll()
+func (bot *Bot) MessageHandler(msg string) error {
+	if msg == "" {
+		return errors.New("ошибка отправки пустого сообщения")
+	}
+	users, err := bot.Users.FindAll()
 	if err != nil {
-		log.Printf("Ошибка получения пользователя %v", err)
+		return err
 	}
-	for _, existUser := range existUsers {
-		log.Printf("пользователя %v", existUser.TelegramId)
-		return ctx.Send("sdfdf")
+	var usersWitError []int64
+	for _, user := range users {
+		_, err = bot.Bot.Send(user, msg)
+		if err != nil {
+			usersWitError = append(usersWitError, user.TelegramId)
+		}
 	}
-	return ctx.Send("Привет")
+	if len(usersWitError) != 0 {
+		return fmt.Errorf("ошибка при отправке пользовотелям: %v", usersWitError)
+	}
+	return nil
 }

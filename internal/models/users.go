@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"strconv"
+)
 
 type User struct {
 	gorm.Model
@@ -44,4 +47,8 @@ func (m *UserModel) FindAll() ([]User, error) {
 	}
 
 	return existUser, nil
+}
+
+func (u User) Recipient() string {
+	return strconv.FormatInt(u.ChatId, 10)
 }

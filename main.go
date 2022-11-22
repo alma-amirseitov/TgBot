@@ -50,7 +50,6 @@ func main() {
 	http.HandleFunc("/message", bot.MessagePostHandler)
 
 	bot.Bot.Handle("/start", bot.StartHandler)
-	bot.Bot.Handle("/message", bot.MessageHandler)
 	bot.Bot.Start()
 
 }
