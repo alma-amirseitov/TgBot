@@ -54,7 +54,7 @@ func (bot *Bot) StartHandler(ctx telebot.Context) error {
 		}
 	}
 
-	return ctx.Send("Привет" + ctx.Sender().FirstName)
+	return ctx.Send("Привет " + ctx.Sender().FirstName)
 }
 
 func (bot *Bot) MessageHandler(msg string) error {

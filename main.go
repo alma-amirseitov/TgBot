@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"github.com/alma-amirseitov/TgBot/cmd/api"
+	"github.com/alma-amirseitov/TgBot/cmd/app"
 	"github.com/alma-amirseitov/TgBot/cmd/bot"
 	"github.com/alma-amirseitov/TgBot/internal/models"
 	"gorm.io/driver/mysql"
@@ -42,12 +42,16 @@ func main() {
 		Bot:   bot.InitBot(cfg.BotToken),
 		Users: &models.UserModel{Db: db},
 	}
-
-	app := api.Application{
+	app := app.Application{
 		Bot: &bot,
 	}
-	err = app.Serve(":8081")
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	go func() {
+		err = app.Serve(":8081")
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	}()
+	bot.Bot.Handle("/start", bot.StartHandler)
+	bot.Bot.Start()
+
 }

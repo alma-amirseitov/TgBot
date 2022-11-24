@@ -38,7 +38,7 @@ func (m *UserModel) FindOne(telegramId int64) (*User, error) {
 }
 
 func (m *UserModel) FindAll() ([]User, error) {
-	existUser := []User{}
+	var existUser []User
 
 	result := m.Db.Find(&existUser)
 
