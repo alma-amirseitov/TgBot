@@ -2,14 +2,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
-	"net/http"
-
+	"github.com/alma-amirseitov/TgBot/cmd/app"
 	"github.com/alma-amirseitov/TgBot/cmd/bot"
 	"github.com/alma-amirseitov/TgBot/internal/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 
 	"github.com/BurntSushi/toml"
 )
@@ -44,19 +42,16 @@ func main() {
 		Bot:   bot.InitBot(cfg.BotToken),
 		Users: &models.UserModel{Db: db},
 	}
-
-	go serverForPOST()
-
-	http.HandleFunc("/message", bot.MessagePostHandler)
-
+	app := app.Application{
+		Bot: &bot,
+	}
+	go func() {
+		err = app.Serve(":8081")
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+	}()
 	bot.Bot.Handle("/start", bot.StartHandler)
 	bot.Bot.Start()
 
-}
-
-func serverForPOST() {
-	fmt.Printf("Starting server for HTTP POST...\n")
-	if err := http.ListenAndServe(":8081", nil); err != nil {
-		log.Fatal(err)
-	}
 }
